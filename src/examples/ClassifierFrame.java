@@ -52,6 +52,7 @@ public class ClassifierFrame extends javax.swing.JFrame {
         statusLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         menuOpen = new javax.swing.JMenuItem();
 
         textarea.setColumns(20);
@@ -110,6 +111,15 @@ public class ClassifierFrame extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setLabel("Test");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
         menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuOpen.setText("Create Classifier");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
@@ -120,6 +130,7 @@ public class ClassifierFrame extends javax.swing.JFrame {
         jMenu1.add(menuOpen);
 
         jMenuBar1.add(jMenu1);
+        jMenu1.getAccessibleContext().setAccessibleDescription("");
 
         setJMenuBar(jMenuBar1);
 
@@ -190,7 +201,6 @@ public class ClassifierFrame extends javax.swing.JFrame {
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
         TrainerFrame newTrainer = new TrainerFrame();
         newTrainer.setVisible(true);
-        System.out.println("hi");
 // TODO Open TrainerFrame instance:
     }//GEN-LAST:event_menuOpenActionPerformed
 
@@ -226,6 +236,12 @@ public class ClassifierFrame extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
        new Thread(new thread1()).start(); //Start the thread
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+       testFrame newTest = new testFrame();
+       newTest.setVisible(true);
+// TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     
     /**
@@ -301,6 +317,7 @@ public class ClassifierFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
