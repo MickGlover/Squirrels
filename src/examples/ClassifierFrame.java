@@ -61,7 +61,6 @@ public class ClassifierFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Animal Call Classification");
-        setAlwaysOnTop(true);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Squirrel Calls", "Bat Calls", "Bird Calls", "Cthulu Calls" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
