@@ -110,8 +110,8 @@ public class ClassifierFrame extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
-        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        menuOpen.setText("Open");
+        menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        menuOpen.setText("Create Classifier");
         menuOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuOpenActionPerformed(evt);
@@ -188,7 +188,10 @@ public class ClassifierFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
-        // TODO add your handling code here:
+        TrainerFrame newTrainer = new TrainerFrame();
+        newTrainer.setVisible(true);
+        System.out.println("hi");
+// TODO Open TrainerFrame instance:
     }//GEN-LAST:event_menuOpenActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
