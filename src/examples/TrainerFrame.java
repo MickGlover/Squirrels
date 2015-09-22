@@ -29,8 +29,6 @@ public class TrainerFrame extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jButton1.setLabel("Create New Classifier");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
