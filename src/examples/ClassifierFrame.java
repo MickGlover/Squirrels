@@ -12,18 +12,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author mick
  */
 public class ClassifierFrame extends javax.swing.JFrame {
-
+    DefaultTableModel tableData;
+    
     /**
      * Creates new form NewJFrame
      */
     public ClassifierFrame() {
         initComponents();
+        this.tableData = (DefaultTableModel) jTableFiles.getModel();
     }
 
     /**
@@ -38,34 +41,51 @@ public class ClassifierFrame extends javax.swing.JFrame {
         JFileChooser = new javax.swing.JFileChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         textarea = new javax.swing.JTextArea();
-        jComboBox1 = new javax.swing.JComboBox();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jComboBoxClassifier = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jTextFieldOutput = new javax.swing.JTextField();
+        jTextFieldInput = new javax.swing.JTextField();
+        jButtonBrowseInput = new javax.swing.JButton();
+        jButtonBrowseOutput = new javax.swing.JButton();
         pBar = new javax.swing.JProgressBar();
         jLabel4 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
+        jButtonClassify = new javax.swing.JButton();
         statusLabel = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTableFiles = new javax.swing.JTable();
+        jButtonNew = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
         menuOpen = new javax.swing.JMenuItem();
 
         textarea.setColumns(20);
         textarea.setRows(5);
         jScrollPane1.setViewportView(textarea);
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable1);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Animal Call Classification");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Squirrel Calls", "Bat Calls", "Bird Calls", "Cthulu Calls" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        jComboBoxClassifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Squirrel Calls", "Bat Calls", "Bird Calls" }));
+        jComboBoxClassifier.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                jComboBoxClassifierActionPerformed(evt);
             }
         });
 
@@ -73,51 +93,74 @@ public class ClassifierFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Input Folder");
 
-        jLabel3.setText("Output Folder");
+        jLabel3.setText("Output File");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldOutput.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                jTextFieldOutputInputMethodTextChanged(evt);
+            }
+        });
+        jTextFieldOutput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jTextFieldOutputActionPerformed(evt);
+            }
+        });
+        jTextFieldOutput.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTextFieldOutputPropertyChange(evt);
             }
         });
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                jTextFieldInputActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Browse");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonBrowseInput.setText("Browse");
+        jButtonBrowseInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonBrowseInputActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Browse");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jButtonBrowseOutput.setText("Browse");
+        jButtonBrowseOutput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jButtonBrowseOutputActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Classify");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        jButtonClassify.setText("Classify");
+        jButtonClassify.setEnabled(false);
+        jButtonClassify.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                jButtonClassifyActionPerformed(evt);
+            }
+        });
+
+        jTableFiles.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "File Name", "Classification"
+            }
+        ));
+        jScrollPane3.setViewportView(jTableFiles);
+        jTableFiles.getAccessibleContext().setAccessibleName("");
+        jTableFiles.getAccessibleContext().setAccessibleDescription("");
+
+        jButtonNew.setLabel("New Classifier");
+        jButtonNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNewActionPerformed(evt);
             }
         });
 
         jMenu1.setText("File");
-
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setLabel("Test");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem1);
 
         menuOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuOpen.setText("Create Classifier");
@@ -140,61 +183,74 @@ public class ClassifierFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonClassify)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonNew))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextFieldOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonBrowseOutput))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextFieldInput, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonBrowseInput))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jComboBoxClassifier, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 38, Short.MAX_VALUE))
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1))
-                            .addComponent(jButton3)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 71, Short.MAX_VALUE))
                     .addComponent(statusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGap(51, 51, 51)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jLabel2)
-                .addGap(3, 3, 3)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addGap(2, 2, 2)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
-                .addGap(44, 44, 44)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jLabel2)
+                        .addGap(3, 3, 3)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextFieldInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonBrowseInput))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3)
+                        .addGap(2, 2, 2)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextFieldOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonBrowseOutput))
+                        .addGap(44, 44, 44)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBoxClassifier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonClassify)
+                    .addComponent(jButtonNew))
+                .addGap(13, 13, 13)
                 .addComponent(pBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27))
         );
 
+        jButtonClassify.getAccessibleContext().setAccessibleDescription("");
+
         getAccessibleContext().setAccessibleDescription("");
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOpenActionPerformed
@@ -203,44 +259,72 @@ public class ClassifierFrame extends javax.swing.JFrame {
 // TODO Open TrainerFrame instance:
     }//GEN-LAST:event_menuOpenActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void jComboBoxClassifierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxClassifierActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_jComboBoxClassifierActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    private void jTextFieldOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldOutputActionPerformed
+        jButtonClassify.setEnabled(jTextFieldOutput.getText().length() > 0 && jTextFieldInput.getText().length() > 0);
+        
+    }//GEN-LAST:event_jTextFieldOutputActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    private void jTextFieldInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldInputActionPerformed
+        jButtonClassify.setEnabled(jTextFieldOutput.getText().length() > 0 && jTextFieldInput.getText().length() > 0);
+        updateTable(jTextFieldInput.getText());
+    }//GEN-LAST:event_jTextFieldInputActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void updateTable(String directory){
+        try{
+            File dir = new File(directory);
+            File[] directoryListing = dir.listFiles();
+            if (directoryListing != null) {
+                for (File child : directoryListing) {
+                    String[] newRow = {child.getName(),"?"};
+                    tableData.addRow(newRow);
+                }
+            }
+        } catch(Exception e) {
+            //todo
+        }
+    }
+    private void jButtonBrowseInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBrowseInputActionPerformed
         JFileChooser fc = new JFileChooser(); 
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fc.setCurrentDirectory(new File("C:\\Users\\mick\\Documents\\NetBeansProjects\\Squirells"));
         fc.showOpenDialog(null); 
-        jTextField2.setText(fc.getSelectedFile().getPath());
-    }//GEN-LAST:event_jButton1ActionPerformed
+        jTextFieldInput.setText(fc.getSelectedFile().getPath());
+        jButtonClassify.setEnabled(jTextFieldOutput.getText().length() > 0 && jTextFieldInput.getText().length() > 0);
+        updateTable(jTextFieldInput.getText());
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_jButtonBrowseInputActionPerformed
+
+    private void jButtonBrowseOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBrowseOutputActionPerformed
         JFileChooser fc = new JFileChooser(); 
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fc.setCurrentDirectory(new File("C:\\Users\\mick\\Documents\\NetBeansProjects\\Squirells"));
         fc.showOpenDialog(null); 
-        jTextField1.setText(fc.getSelectedFile().getPath());
+        jTextFieldOutput.setText(fc.getSelectedFile().getPath());
+        jButtonClassify.setEnabled(jTextFieldOutput.getText().length() > 0 && jTextFieldInput.getText().length() > 0);
 
-    }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jButtonBrowseOutputActionPerformed
+
+    private void jButtonClassifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClassifyActionPerformed
        new Thread(new thread1()).start(); //Start the thread
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jButtonClassifyActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-       testFrame newTest = new testFrame();
-       newTest.setVisible(true);
-// TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    private void jTextFieldOutputPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTextFieldOutputPropertyChange
+
+    }//GEN-LAST:event_jTextFieldOutputPropertyChange
+
+    private void jTextFieldOutputInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_jTextFieldOutputInputMethodTextChanged
+        jButtonClassify.setEnabled(true);
+    }//GEN-LAST:event_jTextFieldOutputInputMethodTextChanged
+
+    private void jButtonNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewActionPerformed
+        TrainerFrame newTrainer = new TrainerFrame();
+        newTrainer.setVisible(true);
+    }//GEN-LAST:event_jButtonNewActionPerformed
 
     
     /**
@@ -306,20 +390,24 @@ public class ClassifierFrame extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser JFileChooser;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JButton jButtonBrowseInput;
+    private javax.swing.JButton jButtonBrowseOutput;
+    public javax.swing.JButton jButtonClassify;
+    private javax.swing.JButton jButtonNew;
+    private javax.swing.JComboBox jComboBoxClassifier;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTableFiles;
+    private javax.swing.JTextField jTextFieldInput;
+    private javax.swing.JTextField jTextFieldOutput;
     private javax.swing.JMenuItem menuOpen;
     private static javax.swing.JProgressBar pBar;
     private static javax.swing.JLabel statusLabel;
