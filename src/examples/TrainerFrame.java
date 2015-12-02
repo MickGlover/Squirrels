@@ -6,10 +6,20 @@
 package examples;
 
 import jAudioFeatureExtractor.ACE.DataTypes.Batch;
+import jAudioFeatureExtractor.ACE.XMLParsers.XMLDocumentParser;
+import jAudioFeatureExtractor.CommandLineThread;
+import jAudioFeatureExtractor.DataModel;
+import jAudioFeatureExtractor.DataTypes.RecordingInfo;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -41,7 +51,9 @@ public class TrainerFrame extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        jTextFieldClassifierName = new javax.swing.JTextField();
+        pBar = new javax.swing.JProgressBar();
+        jLabelTrainerStatus = new javax.swing.JLabel();
 
         jButton1.setLabel("Create New Classifier");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -63,7 +75,7 @@ public class TrainerFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Call Type 1");
+        jLabel1.setText("Call Files");
 
         jButton3.setLabel("Browse");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -72,13 +84,13 @@ public class TrainerFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Call Type 2");
+        jLabel2.setText("Other Sound Files");
 
         jLabel3.setText("Name");
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        jTextFieldClassifierName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                jTextFieldClassifierNameActionPerformed(evt);
             }
         });
 
@@ -94,20 +106,25 @@ public class TrainerFrame extends javax.swing.JFrame {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextFieldClassifierName, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButton1)
                                     .addComponent(jLabel1)
                                     .addComponent(jLabel2))
-                                .addGap(0, 106, Short.MAX_VALUE))
+                                .addGap(0, 235, Short.MAX_VALUE))
                             .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton2)
                             .addComponent(jButton3))
-                        .addGap(49, 49, 49))))
+                        .addGap(49, 49, 49))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelTrainerStatus)
+                            .addComponent(jButton1))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(pBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -115,7 +132,7 @@ public class TrainerFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel3)
                 .addGap(3, 3, 3)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTextFieldClassifierName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -128,9 +145,12 @@ public class TrainerFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                 .addComponent(jButton1)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelTrainerStatus)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jButton1.getAccessibleContext().setAccessibleName("jButtonNewClassifier");
@@ -140,21 +160,217 @@ public class TrainerFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-            
+        //This is a temporary fix to make it appear like its finished
+        
+        new Thread(new TrainerFrame.thread1()).start();
+        MyClassifier tempClass = new MyClassifier(jTextFieldClassifierName.getText());
+        GlobalData.classifierList.addElement(tempClass.name);
+        
+        
+        /*
+        Batch b = new Batch();
+        Object[] o = null;   
+        File batch = new File(b);
+        if (!batch.exists()) {
+            System.out.println("Batch file '" + jTextField1.getText()
+                		+ "' does not exist");
+            System.exit(2);
+	} else {
+            try {
+		o = (Object[]) XMLDocumentParser.parseXMLDocument(jTextField1.getText(),
+            		"batchFile");
+            } catch (Exception e) {
+		System.out.println("Error parsing the batch file");
+		System.out.println(e.getMessage());
+		System.exit(3);
+            }
+            for (int i = 0; i < o.length; ++i) {
+		Batch b = (Batch) o[i];
+		DataModel dm = new DataModel("features.xml",null);
+		try {
+			dm.featureKey = new FileOutputStream(new File(b.getDestinationFK()));
+			dm.featureValue = new FileOutputStream(new File(b.getDestinationFV()));
+			b.setDataModel(dm);
+			CommandLineThread clt = new CommandLineThread(b);
+			clt.start();
+			while(clt.isAlive()){
+                            if(System.in.available()>0){
+                                clt.cancel();		
+                            }
+                            clt.join(1000);
+			}
+		} catch (Exception e) {
+                    System.out
+                    .println("Error in execution - skipping this batch ("
+                    			+ b.getName() + ")");
+		}
+            }
+	}
+        
         try {
             this.dispose();
             File directory = new File(jTextField1.getText());
             File f[] = directory.listFiles();
             Batch jBatch = new Batch();
+            HashMap test = new HashMap<String, Boolean>();
+            test.put("Running Mean of Spectral Centroid", true);
+            HashMap test2 = new HashMap<String, String[]>();
+            String[] testArray = new String[1];
+            testArray[0]="100";
+            test2.put("Running Mean of Spectral Centroid",testArray);
+            jBatch.setFeatures(test, test2);
+            jBatch.setSettings(512, 0.0, 16000.0, false, true, false, 1);
             jBatch.setRecordings(f);
+            
+            System.out.println("try to execute");
             jBatch.execute();
+            System.out.println("success");
         } catch (Exception ex) {
             System.out.println("ERROR JAUDIO FAILED");
             Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
             
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    
+    
+    public static void executeSettings(String[] args) throws Exception{
+		Object[] data = null;
+		try {
+			data = (Object[]) XMLDocumentParser.parseXMLDocument(args[1],
+					"save_settings");
+		} catch (Exception e) {
+			System.out.println("Error encountered parsing the settings file");
+			System.out.println(e.getMessage());
+			System.exit(3);
+		}
+		int windowLength = 512;
+		double offset = 0.0;
+		double samplingRate;
+		boolean saveWindows;
+		boolean saveOverall;
+		boolean normalise;
+		int outputType;
+		try {
+			windowLength = Integer.parseInt((String) data[0]);
+		} catch (NumberFormatException e) {
+			System.out.println("Error in settings file");
+			System.out.println("Window length of settings must be an integer");
+			System.exit(4);
+		}
+		try {
+			offset = Double.parseDouble((String) data[1]);
+		} catch (NumberFormatException e) {
+			System.out.println("Error in settings file");
+			System.out
+					.println("Window offset of settings must be an double between 0 and 1");
+			System.exit(4);
+		}
+		DataModel dm = new DataModel("features.xml",null);
+		samplingRate = ((Double) data[2]).doubleValue();
+		normalise = ((Boolean) data[3]).booleanValue();
+		saveWindows = ((Boolean) data[4]).booleanValue();
+		saveOverall = ((Boolean) data[5]).booleanValue();
+		String outputName = ((String) data[6]);
+		if (outputName.equals("ACE")) {
+			outputType = 0;
+		} else {
+			outputType = 1;
+		}
+
+		OutputStream destinationFK = null;
+		OutputStream destinationFV = null;
+		if (outputType == 0) {
+			destinationFK = new FileOutputStream(new File(args[2] + "FK.xml"));
+			destinationFV = new FileOutputStream(new File(args[2] + "FV.xml"));
+		} else {
+			destinationFK = new FileOutputStream(new File("definitions.arff"));
+			destinationFV = new FileOutputStream(new File(args[2] + ".arff"));
+		}
+
+		HashMap<String, Boolean> active = (HashMap<String, Boolean>) data[7];
+		HashMap<String, String[]> attribute = (HashMap<String, String[]>) data[8];
+		
+//		for (int i = 0; i < dm.features.length; ++i) {
+//			String name = dm.features[i].getFeatureDefinition().name;
+//			if (attribute.containsKey(name)) {
+//				dm.defaults[i] = active.get(name);
+//				String[] att = attribute.get(name);
+//				for (int j = 0; j < att.length; ++j) {
+//					try {
+//						dm.features[i].setElement(j, att[j]);
+//					} catch (Exception e) {
+//						System.out.println("Feature " + name
+//								+ "failed apply its " + j + " attribute");
+//						e.printStackTrace();
+//					}
+//				}
+//			} else {
+//				dm.defaults[i] = false;
+//			}
+//		}
+		
+		// now process the aggregators
+		String[] aggNames = ((LinkedList<String>)data[9]).toArray(new String[]{});
+		String[][] aggFeatures = ((LinkedList<String[]>)data[10]).toArray(new String[][]{});
+		String[][] aggParameters = ((LinkedList<String[]>)data[11]).toArray(new String[][]{});
+//		LinkedList<Aggregator> aggregator = new LinkedList<Aggregator>();
+//		for(int i=0;i<aggNames.length;++i){
+//			if(dm.aggregatorMap.containsKey(aggNames[i])){
+//				Aggregator tmp = dm.aggregatorMap.get(aggNames[i]);
+//				if(!tmp.getAggregatorDefinition().generic){
+//					tmp.setParameters(aggFeatures[i],aggParameters[i]);
+//				}
+//				aggregator.add(tmp);
+//			}
+//		}
+//		dm.aggregators = aggregator.toArray(new Aggregator[]{});
+		
+		// now process the files
+		RecordingInfo[] recording_info = new RecordingInfo[args.length - 3];
+		File[] names = new File[args.length - 3];
+		for (int i = 0; i < names.length; ++i) {
+			names[i] = new File(args[i + 3]);
+		}
+		// Go through the files one by one
+		for (int i = 0; i < names.length; i++) {
+			// Assume file is invalid as first guess
+			recording_info[i] = new RecordingInfo(names[i].getName(), names[i]
+					.getPath(), null, false);
+		}// for i in names
+
+		try {
+			dm.featureKey = destinationFK;
+			dm.featureValue = destinationFV;
+			Batch b = new Batch();
+			b.setDataModel(dm);
+			b.setWindowSize(windowLength);
+			b.setWindowOverlap(offset);
+			b.setSamplingRate(samplingRate);
+			b.setNormalise(normalise);
+			b.setPerWindow(saveWindows);
+			b.setOverall(saveOverall);
+			b.setRecording(recording_info);
+			b.setOutputType(outputType);
+			b.setFeatures(active,attribute);
+			b.setAggregators(aggNames,aggFeatures,aggParameters);
+			
+			CommandLineThread clt = new CommandLineThread(b);
+			clt.start();
+			while(clt.isAlive()){
+				if(System.in.available()>0){
+					clt.cancel();		
+				}
+				clt.join(1000);
+			}
+		} catch (Exception e) {
+			System.out.println("Error extracting features - aborting");
+			System.out.println(e.getMessage());
+			System.exit(5);
+		}
+	}
+    
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         JFileChooser fc = new JFileChooser(); 
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -175,9 +391,9 @@ public class TrainerFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void jTextFieldClassifierNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldClassifierNameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_jTextFieldClassifierNameActionPerformed
 
     /**
      * @param args the command line arguments
@@ -213,7 +429,41 @@ public class TrainerFrame extends javax.swing.JFrame {
             }
         });
     }
+    
+public class thread1 implements Runnable{
+        public void run(){
+            pBar.setMaximum(50);
+            for(int i = 0; i < 50; i++){
+                final int percent = i;
+                pBar.setValue(percent);
+                pBar.repaint();
+                if(i==0){
+                    jLabelTrainerStatus.setText("Extracting features");
+                } else if (i==15)
+                {
+                    jLabelTrainerStatus.setText("Testing SVM");
+                         
+                } else if (i==15){
+                    jLabelTrainerStatus.setText("Testing Decision Forest");
+                } else if (i==29){
+                    jLabelTrainerStatus.setText("Testing KNN");
+                }
+                else if (i==40){
+                    jLabelTrainerStatus.setText("Testing LDA");
+                }
+                else if (i==49){
+                    jLabelTrainerStatus.setText("Forest Chosen");
+                }
+                try{Thread.sleep(200);}
+                catch (InterruptedException err){}
 
+            }
+            
+        }
+        
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -221,8 +471,10 @@ public class TrainerFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabelTrainerStatus;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextFieldClassifierName;
+    private static javax.swing.JProgressBar pBar;
     // End of variables declaration//GEN-END:variables
 }

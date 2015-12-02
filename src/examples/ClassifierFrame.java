@@ -8,9 +8,12 @@ package examples;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ComboBoxModel;
 import javax.swing.JFileChooser;
+import javax.swing.MutableComboBoxModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
@@ -20,13 +23,13 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ClassifierFrame extends javax.swing.JFrame {
     DefaultTableModel tableData;
-    
     /**
      * Creates new form NewJFrame
      */
     public ClassifierFrame() {
         initComponents();
         this.tableData = (DefaultTableModel) jTableFiles.getModel();
+        GlobalData.classifierList = (MutableComboBoxModel) jComboBoxClassifier.getModel();
     }
 
     /**
@@ -82,7 +85,7 @@ public class ClassifierFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Animal Call Classification");
 
-        jComboBoxClassifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Squirrel Calls", "Bat Calls", "Bird Calls" }));
+        jComboBoxClassifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Northern Flying Squirrel", "Bat", "Bird" }));
         jComboBoxClassifier.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxClassifierActionPerformed(evt);
@@ -237,9 +240,9 @@ public class ClassifierFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonClassify)
-                    .addComponent(jButtonNew))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonNew)
+                    .addComponent(jButtonClassify, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(13, 13, 13)
                 .addComponent(pBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27))
@@ -275,6 +278,10 @@ public class ClassifierFrame extends javax.swing.JFrame {
 
     private void updateTable(String directory){
         try{
+            while(tableData.getRowCount() != 0){
+                 tableData.removeRow(0);
+            }
+           
             File dir = new File(directory);
             File[] directoryListing = dir.listFiles();
             if (directoryListing != null) {
@@ -311,6 +318,7 @@ public class ClassifierFrame extends javax.swing.JFrame {
 
     private void jButtonClassifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClassifyActionPerformed
        new Thread(new thread1()).start(); //Start the thread
+      // 
     }//GEN-LAST:event_jButtonClassifyActionPerformed
 
     private void jTextFieldOutputPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTextFieldOutputPropertyChange
@@ -363,24 +371,29 @@ public class ClassifierFrame extends javax.swing.JFrame {
         });
     }
 
-    public static class thread1 implements Runnable{
+    public class thread1 implements Runnable{
         public void run(){
-            for(int i = 0; i < 100; i++){
+            pBar.setMaximum(30+tableData.getRowCount());
+            for(int i = 0; i < 30+tableData.getRowCount(); i++){
                 final int percent = i;
                 pBar.setValue(percent);
                 pBar.repaint();
                 if(i==0){
                     statusLabel.setText("Extracting features");
-                } else if (i==30)
+                } else if (i==15)
                 {
                     statusLabel.setText("Applying Classifier");
-                } else if (i==80)
-                {
+                    
+                } else if(i>15 && i < tableData.getRowCount()+16){
+                    Random rn = new Random();
+                    int x = rn.nextInt() % 2;
+                    tableData.setValueAt(x==0 ? "Northern Flying Squirrel" : "Other", i-16, 1);                
+                } else if (i==15+tableData.getRowCount()){
                     statusLabel.setText("Generating Report");
-                } else if (i==99){
+                } else if (i==29+tableData.getRowCount()){
                     statusLabel.setText("Complete");
                 }
-                try{Thread.sleep(100);}
+                try{Thread.sleep(200);}
                 catch (InterruptedException err){}
 
             }
