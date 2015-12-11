@@ -176,7 +176,10 @@ public class TrainerFrame extends javax.swing.JFrame {
     private void jButtonTrainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTrainActionPerformed
         //This is a temporary fix to make it appear like its finished
         
-        
+        pBar.setMaximum(7);
+        pBar.setValue(0);
+        pBar.repaint();
+        jLabelTrainerStatus.setText("Extracting Target Features");
         //Generate Target Features
         String featuresTarget = null;
         new Thread(new TrainerFrame.thread1()).start();
@@ -187,7 +190,11 @@ public class TrainerFrame extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-             
+        
+        pBar.setValue(1);
+        pBar.repaint();
+        jLabelTrainerStatus.setText("Extracting Other Features");
+
         //Generate Non-targe features Features
         String featuresOther = null;
         new Thread(new TrainerFrame.thread1()).start();
@@ -199,7 +206,10 @@ public class TrainerFrame extends javax.swing.JFrame {
             Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        
+        pBar.setValue(2);
+        pBar.repaint();
+        jLabelTrainerStatus.setText("Parsing Features");
+
         //Load Target Arrf File
         BufferedReader readerTarget;
         Instances dataTarget = null;
@@ -212,6 +222,8 @@ public class TrainerFrame extends javax.swing.JFrame {
             Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        pBar.setValue(3);
+        pBar.repaint();
         //Load Other Arrf File
         BufferedReader readerOther;
         Instances dataOther = null;
@@ -224,6 +236,10 @@ public class TrainerFrame extends javax.swing.JFrame {
             Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        pBar.setValue(4);
+        pBar.repaint();
+        jLabelTrainerStatus.setText("Training Classifier");
+
         Instances newData = new Instances(dataTarget);
         FastVector typeList = new FastVector() {};
         typeList.add("target");
@@ -240,7 +256,8 @@ public class TrainerFrame extends javax.swing.JFrame {
         }
         
         newData.setClassIndex(newData.numAttributes()-1);
-        
+        pBar.setValue(5);
+        pBar.repaint();
         ArffSaver saver = new ArffSaver();
         saver.setInstances(newData);
         try {
@@ -254,7 +271,8 @@ public class TrainerFrame extends javax.swing.JFrame {
             Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        
+        pBar.setValue(6);
+        pBar.repaint();
         //Train a classifier
         String[] options = new String[1];
         options[0] = "-U";
@@ -274,7 +292,10 @@ public class TrainerFrame extends javax.swing.JFrame {
         System.out.println("classifier saved");
         MyClassifier tempClass = new MyClassifier(jTextFieldClassifierName.getText());
         GlobalData.classifierList.addElement(tempClass.name);
-                            
+        pBar.setValue(7);
+        pBar.repaint();     
+        jLabelTrainerStatus.setText("Finished");
+
     }//GEN-LAST:event_jButtonTrainActionPerformed
 
     
@@ -338,7 +359,7 @@ public class TrainerFrame extends javax.swing.JFrame {
     
 public class thread1 implements Runnable{
         public void run(){
-            pBar.setMaximum(50);
+            /*pBar.setMaximum(50);
             for(int i = 0; i < 50; i++){
                 final int percent = i;
                 pBar.setValue(percent);
@@ -363,7 +384,7 @@ public class thread1 implements Runnable{
                 try{Thread.sleep(200);}
                 catch (InterruptedException err){}
 
-            }
+            }*/
             
         }
         
