@@ -5,7 +5,9 @@
  */
 package examples;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
@@ -16,6 +18,11 @@ import javax.swing.JFileChooser;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import weka.classifiers.misc.SerializedClassifier;
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
 
 /**
  *
@@ -30,6 +37,15 @@ public class ClassifierFrame extends javax.swing.JFrame {
         initComponents();
         this.tableData = (DefaultTableModel) jTableFiles.getModel();
         GlobalData.classifierList = (MutableComboBoxModel) jComboBoxClassifier.getModel();
+        File dir = new File("Classifiers");
+        dir.mkdir();
+        File[] directoryListing = dir.listFiles();
+        if (directoryListing != null) {
+            for (File child : directoryListing) {
+                GlobalData.classifierList.addElement(child.getName());
+            }
+        }
+        
     }
 
     /**
@@ -85,7 +101,6 @@ public class ClassifierFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Animal Call Classification");
 
-        jComboBoxClassifier.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Northern Flying Squirrel", "Bat", "Bird" }));
         jComboBoxClassifier.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxClassifierActionPerformed(evt);
@@ -297,7 +312,6 @@ public class ClassifierFrame extends javax.swing.JFrame {
     private void jButtonBrowseInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBrowseInputActionPerformed
         JFileChooser fc = new JFileChooser(); 
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fc.setCurrentDirectory(new File("C:\\Users\\mick\\Documents\\NetBeansProjects\\Squirells"));
         fc.showOpenDialog(null); 
         jTextFieldInput.setText(fc.getSelectedFile().getPath());
         jButtonClassify.setEnabled(jTextFieldOutput.getText().length() > 0 && jTextFieldInput.getText().length() > 0);
@@ -308,7 +322,6 @@ public class ClassifierFrame extends javax.swing.JFrame {
     private void jButtonBrowseOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBrowseOutputActionPerformed
         JFileChooser fc = new JFileChooser(); 
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fc.setCurrentDirectory(new File("C:\\Users\\mick\\Documents\\NetBeansProjects\\Squirells"));
         fc.showOpenDialog(null); 
         jTextFieldOutput.setText(fc.getSelectedFile().getPath());
         jButtonClassify.setEnabled(jTextFieldOutput.getText().length() > 0 && jTextFieldInput.getText().length() > 0);
@@ -318,6 +331,7 @@ public class ClassifierFrame extends javax.swing.JFrame {
 
     private void jButtonClassifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClassifyActionPerformed
        new Thread(new thread1()).start(); //Start the thread
+       
       // 
     }//GEN-LAST:event_jButtonClassifyActionPerformed
 
@@ -373,6 +387,51 @@ public class ClassifierFrame extends javax.swing.JFrame {
 
     public class thread1 implements Runnable{
         public void run(){
+             //Generate Target Features
+                String featuresTarget = null;
+                
+                try {
+                    featuresTarget = GlobalData.getFeatures(jTextFieldInput.getText());
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                SerializedClassifier classifier = new SerializedClassifier();
+                classifier.setModelFile(new File("Classifiers/" + jComboBoxClassifier.getSelectedItem().toString()));
+                
+                //Load Target Arrf File
+            BufferedReader readerTarget;
+            Instances dataTarget = null;
+     
+            try {
+                readerTarget = new BufferedReader( new FileReader(featuresTarget));
+                dataTarget = new Instances(readerTarget);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(TrainerFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            FastVector typeList = new FastVector() {};
+            typeList.add("target");
+            typeList.add("other");
+            dataTarget.insertAttributeAt(new Attribute("NewNominal", (java.util.List<String>) typeList), dataTarget.numAttributes());
+            dataTarget.setClassIndex(dataTarget.numAttributes()-1);
+
+            for(int i =0; i < dataTarget.numInstances(); i++){
+                    try {
+                        Double type = (Double)classifier.classifyInstance(dataTarget.instance(i));
+                        tableData.setValueAt(type==0 ? "True" : "False",i, 1);
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+            }
+            
+            
+            
+            /*
             pBar.setMaximum(30+tableData.getRowCount());
             for(int i = 0; i < 30+tableData.getRowCount(); i++){
                 final int percent = i;
@@ -385,8 +444,6 @@ public class ClassifierFrame extends javax.swing.JFrame {
                     statusLabel.setText("Applying Classifier");
                     
                 } else if(i>15 && i < tableData.getRowCount()+16){
-                    Random rn = new Random();
-                    int x = rn.nextInt() % 2;
                     tableData.setValueAt(x==0 ? "Northern Flying Squirrel" : "Other", i-16, 1);                
                 } else if (i==15+tableData.getRowCount()){
                     statusLabel.setText("Generating Report");
@@ -395,8 +452,9 @@ public class ClassifierFrame extends javax.swing.JFrame {
                 }
                 try{Thread.sleep(200);}
                 catch (InterruptedException err){}
-
-            }
+                }
+            */
+            
             
         }
         

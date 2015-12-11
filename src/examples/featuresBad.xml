@@ -18,7 +18,7 @@
 	<!ELEMENT aggregatorAttribute (#PCDATA)>
 ]>
 
-<save_settings>
+<feature_list>
 	<windowSize>512</windowSize>
 	<windowOverlap>0.0</windowOverlap>
 	<samplingRate>16000.0</samplingRate>
@@ -848,4 +848,4 @@
 			<aggregator>
 				<aggregatorName>Mean</aggregatorName>
 			</aggregator>
-</save_settings>
+</feature_list>
