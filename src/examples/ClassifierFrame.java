@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 import java.util.logging.Level;
@@ -30,6 +31,7 @@ import weka.core.Instances;
  */
 public class ClassifierFrame extends javax.swing.JFrame {
     DefaultTableModel tableData;
+    private FileWriter fileWriter;
     /**
      * Creates new form NewJFrame
      */
@@ -332,7 +334,7 @@ public class ClassifierFrame extends javax.swing.JFrame {
     private void jButtonClassifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClassifyActionPerformed
        new Thread(new thread1()).start(); //Start the thread
        
-      // 
+
     }//GEN-LAST:event_jButtonClassifyActionPerformed
 
     private void jTextFieldOutputPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTextFieldOutputPropertyChange
@@ -384,7 +386,8 @@ public class ClassifierFrame extends javax.swing.JFrame {
             }
         });
     }
-
+    
+    
     public class thread1 implements Runnable{
         public void run(){
              //Generate Target Features
@@ -428,37 +431,44 @@ public class ClassifierFrame extends javax.swing.JFrame {
                         Logger.getLogger(ClassifierFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
             }
+            writeToCSV();
+            try {
+                fileWriter.flush();
+            } catch (IOException ex) {
+                Logger.getLogger(ClassifierFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
             
+                
             
-            /*
-            pBar.setMaximum(30+tableData.getRowCount());
-            for(int i = 0; i < 30+tableData.getRowCount(); i++){
-                final int percent = i;
-                pBar.setValue(percent);
-                pBar.repaint();
-                if(i==0){
-                    statusLabel.setText("Extracting features");
-                } else if (i==15)
-                {
-                    statusLabel.setText("Applying Classifier");
-                    
-                } else if(i>15 && i < tableData.getRowCount()+16){
-                    tableData.setValueAt(x==0 ? "Northern Flying Squirrel" : "Other", i-16, 1);                
-                } else if (i==15+tableData.getRowCount()){
-                    statusLabel.setText("Generating Report");
-                } else if (i==29+tableData.getRowCount()){
-                    statusLabel.setText("Complete");
-                }
-                try{Thread.sleep(200);}
-                catch (InterruptedException err){}
-                }
-            */
             
             
         }
         
     }
+    private void writeToCSV(){
+        try {
+                fileWriter = new FileWriter(jTextFieldOutput.getText());
+                //Write the CSV file header
+                
+                fileWriter.append("File Name, Classification\n");
+                   for(int i =0; i < tableData.getRowCount(); i++){
+                    try {
+                        fileWriter.append(tableData.getValueAt(i, 0).toString() + "," + tableData.getValueAt(i, 1).toString() + "\n");
+                    } catch (Exception ex) {
+                        Logger.getLogger(ClassifierFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                fileWriter.flush();
+                
+
+            }
+                   } catch (IOException ex) {
+                Logger.getLogger(ClassifierFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser JFileChooser;
     private javax.swing.JButton jButtonBrowseInput;
